@@ -42,7 +42,7 @@ fun findWords() {
     for (size in 2..10){
         val words = mutableMapOf<String, Int>()
 
-        while (i + size <= strEncrypt.length){
+        while (size <= strEncrypt.length){
 
         }
         println(words)
