@@ -4,29 +4,49 @@ import java.math.RoundingMode
 
 // Зашифрованное сообщение на странице hrsecuritytkeycoin.pro
 // 28 групп по 5 символов + 1 группа в 3 символа = 143 символа
-val arrEncrypt = """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
+val strEncrypt = """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
                                 TADIF CTAXS TLXHI XQIHX CAEKA AENWU EXCKN LESSX
                                 XIERT AXDLY HSBIT XXHNM XXDKE LSHIB EXOTW OETOX
                                 XDYXB NRWTY XCCAE XAEIA WBS"""
     .replace(" ", "")
     .replace("\n", "")
-    .toCharArray()
+
+val arrEncrypt = strEncrypt.toCharArray()
 
 fun main(args: Array<String>) {
 
     // Так как и текст на картинке приглашения, и строка подсказки из EXIF картинки были на кирилице,
     // то считаем что и зашифрованное сообщение тоже на кирилице.
 
-    print(arrEncrypt.joinToString(""))
-    for (i in 0 until arrEncrypt.size step 2) {
-        println("${arrEncrypt[i]}${arrEncrypt[i + 1]}")
-    }
+    println(strEncrypt)
+    arrEncrypt.forEach { println("$it\t${it.toByte()}\t") }
+
+    // Поищем повторяющиеся слова
+    findWords()
+
+    //val t = arrEncrypt.groupBy { it }.map { it.key to it.value.count() }.associate { it.first to it.second }
+    //t.forEach { char, count -> println("$char\t$count") }
+//    for (i in 0..arrEncrypt.size-1 step 2) {
+//        println("${arrEncrypt[i]}${arrEncrypt[i + 1]}")
+//    }
 
     // Предположение о том что, сообщение является одноалфавитным шифром замены не подтвердилось, частотный анализ выдает абракадабру
     //cipherReplace()
 
     //dictionaryEN.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
     //dictionaryRU.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
+}
+
+fun findWords() {
+
+    for (size in 2..10){
+        val words = mutableMapOf<String, Int>()
+
+        while (i + size <= strEncrypt.length){
+
+        }
+        println(words)
+    }
 }
 
 
