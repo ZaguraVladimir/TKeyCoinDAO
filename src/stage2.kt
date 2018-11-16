@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     // то считаем что и зашифрованное сообщение тоже на кирилице.
 
     println(strEncrypt)
-    arrEncrypt.forEach { println("$it\t${it.toByte()}\t") }
+//    arrEncrypt.forEach { println("$it\t${it.toByte()}\t") }
 
     // Поищем повторяющиеся слова
     findWords()
@@ -39,13 +39,16 @@ fun main(args: Array<String>) {
 
 fun findWords() {
 
-    for (size in 2..10){
+    for (size in 2..10) {
         val words = mutableMapOf<String, Int>()
 
-        while (size <= strEncrypt.length){
-
+        for (i in 0..strEncrypt.length - size) {
+            val word = strEncrypt.substring(i, i + size)
+            println(word)
         }
+        println("Size window: $size")
         println(words)
+        println()
     }
 }
 
