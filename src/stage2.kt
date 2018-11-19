@@ -56,7 +56,7 @@ fun findWords() {
 fun cipherReplace() {
 
     // Частотность символов в зашифрованном сообщении
-    val frequencySymbols = dictionaryEN
+    val frequencySymbols = alphabetEN
         .associate { char -> char to arrEncrypt.filter { char == it }.count().toDouble() / arrEncrypt.size * 100 }
         .map { it.key to BigDecimal(it.value).setScale(2, RoundingMode.HALF_UP).toDouble() }
         .associate { it.first to it.second }

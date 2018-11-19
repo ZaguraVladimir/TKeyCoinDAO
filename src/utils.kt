@@ -1,9 +1,18 @@
+import java.io.File
+
 data class Size(val width: Int, val height: Int)
 
 // ЛАТИНИЦА
 
 // Алфавит
-val dictionaryEN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
+val alphabetEN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
+
+// Словарь
+val dictionaryEN = File("dictionaryEN.txt")
+    .readLines()
+    .asSequence()
+    .filter { it.length > 1 }
+    .associate { it.substringBefore('|') to it.substringAfter('|') }
 
 // Частотность символов
 val baseFrequencySymbolsEN = mapOf(
@@ -38,7 +47,14 @@ val baseFrequencySymbolsEN = mapOf(
 // КИРИЛИЦА
 
 // Алфавит
-val dictionaryRU = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ".toCharArray()
+val alphabetRU = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ".toCharArray()
+
+// Словарь
+val dictionaryRU = File("dictionaryRU.txt")
+    .readLines()
+    .asSequence()
+    .filter { it.length > 1 }
+    .associate { it to it }
 
 // Частотность символов
 val baseFrequencySymbolsRU = mapOf(
