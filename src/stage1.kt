@@ -1,3 +1,4 @@
+
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
@@ -8,13 +9,12 @@ fun main(args: Array<String>) {
 
     val srcFile = File("stage1\\img.jpg")
     val srcImg = ImageIO.read(srcFile)
-    val sizeImg = Size(srcImg.width, srcImg.height)
 
     // Создадим массив, в который перенесем пиксели изображения.
     // Dсе встречающиеся цвета превратим в черный, за исключением белого
     val whiteColor = Color(255, 255, 255, 255)
     val blackColor = Color(0, 0, 0, 255)
-    val arrPixels = Array(sizeImg.height) { _ -> Array(sizeImg.width) { 0 } }
+    val arrPixels = Array(srcImg.height) { _ -> Array(srcImg.width) { 0 } }
     for (row in arrPixels.indices) {
         for (column in arrPixels[row].indices) {
             arrPixels[row][column] = when (srcImg.getRGB(column, row)) {

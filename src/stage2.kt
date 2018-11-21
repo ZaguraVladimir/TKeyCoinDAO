@@ -1,28 +1,120 @@
-import java.math.BigDecimal
-import java.math.RoundingMode
+
+import ciphers.*
+import java.nio.charset.Charset
+import java.util.*
 
 
 // Зашифрованное сообщение на странице hrsecuritytkeycoin.pro
 // 28 групп по 5 символов + 1 группа в 3 символа = 143 символа
+// В исходном коде страницы есть подсказка:
+// <!-- meta name="text" content="143" -->
+// Это скорее всего ключ.
+// В кодировке "windows-1251" это символ: "Џ"
+// В кодировке "866" это символ: "П"
+
 val strEncrypt = """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
-                                TADIF CTAXS TLXHI XQIHX CAEKA AENWU EXCKN LESSX
-                                XIERT AXDLY HSBIT XXHNM XXDKE LSHIB EXOTW OETOX
-                                XDYXB NRWTY XCCAE XAEIA WBS"""
+                            TADIF CTAXS TLXHI XQIHX CAEKA AENWU EXCKN LESSX
+                            XIERT AXDLY HSBIT XXHNM XXDKE LSHIB EXOTW OETOX
+                            XDYXB NRWTY XCCAE XAEIA WBS"""
     .replace(" ", "")
     .replace("\n", "")
 
 val arrEncrypt = strEncrypt.toCharArray()
+val arrEncryptByte = strEncrypt.toByteArray()
 
+val alphabetRU = AlphabetRU()
+
+var strDecrypt = ""
 fun main(args: Array<String>) {
+
+    println("Encrypted message")
+    println("String:\t $strEncrypt")
+    println("Bytes:\t ${Arrays.toString(strEncrypt.toByteArray())}")
+    println()
+
+    if (true) useRSA(strDecrypt)
+
+    return
+
+    arrEncryptByte.forEach { print(it.toString(16)) }
+
+    // Сразу воспользуемся ключем
+    // Если применить XOR, то получаем стоку, в которой только кирилица, но она тоже зашифрована, от неё и будем плясать
+
+//    println("Decrypted message")
+//    println("String:\t $strDecrypt")
+//    println("Bytes:\t ${Arrays.toString(strDecrypt.toByteArray())}")
+//    println()
+
+    val arrDecryptByte = strEncrypt.map { it.toInt() xor 143 }.map { it.toByte() }.toByteArray()
+    applyEncoding(arrDecryptByte, Charsets.UTF_8)
+    applyEncoding(arrDecryptByte, Charsets.UTF_16)
+    applyEncoding(arrDecryptByte, Charsets.UTF_16BE)
+    applyEncoding(arrDecryptByte, Charsets.UTF_16LE)
+    applyEncoding(arrDecryptByte, Charsets.UTF_32)
+    applyEncoding(arrDecryptByte, Charsets.UTF_32BE)
+    applyEncoding(arrDecryptByte, Charsets.UTF_32LE)
+    applyEncoding(arrDecryptByte, Charsets.US_ASCII)
+    applyEncoding(arrDecryptByte, Charsets.ISO_8859_1)
+    applyEncoding(arrDecryptByte, charset("windows-1251"))
+    applyEncoding(arrDecryptByte, charset("866"))
+
+    println()
+
+//    println("Encrypted byte message:\t\t ${strEncrypt.map { it.toInt() }}")
+//    println("Decrypted byte message:\t\t ${strDecrypt.map { it.toInt() }}")
+//    println()
+//
+
+    // Атбаш не подошел
+    if (false) useAtbash(strDecrypt)
+
+    // Поиграемся со сдвигом по алфавиту, т.н. шифром Цезаря
+    if (false) useCaesar(strDecrypt)
+    // Цезарь не подошел
+
+
+    // Поиграемся со сдвигом по алфавиту, т.н. шифром Гронсфельда, в котором ключ состоит не из одной цифры. Это модификация шифра Цезаря
+    if (false) useGronsfeld(strDecrypt)
+    // Гронсфельд не подошел
+
+    // Поиграемся с шифром Виженера
+    if (false) useVigener(strDecrypt)
+    // Виженер не подошел, нет ключа
+
+    // Сдвиг ничего не дал, теперь дело за частотным анализом
+    if (false) useFrequency(strDecrypt)
+
+
+//    val tb = strEncrypt.map { it.toByte() }
+//    val t = strEncrypt.map { it.toByte() + 143 }
+//    println(tb)
+
+
+//    strDecrypt.getFrequencySymbols(alphabetRU).forEach { println("${it.key}\t${it.value}") }
+
+
+//    val arrDecrypt = arrEncrypt.map { it.toInt() + 143 }.map { it.toChar() }.toCharArray()
+//    println("arrDecrypt: ${arrDecrypt.map { it.toInt() }}")
+//
+//    val arrDecryptInt = arrDecrypt.map { it.toInt()}
+//    println("arrDecryptInt: $arrDecryptInt")
+//
+//    println("Sorted: ${arrDecryptInt.sortedBy { it }}")
+//    println("Sorted set: ${arrDecryptInt.toSortedSet()}")
+//
+//    val strDecrypt = String(arrDecrypt.map { it.toByte() }.toByteArray(), charset("windows-1251"))
+//    println("strDecrypt: $strDecrypt")
+
 
     // Так как и текст на картинке приглашения, и строка подсказки из EXIF картинки были на кирилице,
     // то считаем что и зашифрованное сообщение тоже на кирилице.
 
-    println(strEncrypt)
+    //println(strEncrypt)
 //    arrEncrypt.forEach { println("$it\t${it.toByte()}\t") }
 
     // Поищем повторяющиеся слова
-    findWords()
+    //findWords()
 
     //val t = arrEncrypt.groupBy { it }.map { it.key to it.value.count() }.associate { it.first to it.second }
     //t.forEach { char, count -> println("$char\t$count") }
@@ -33,8 +125,58 @@ fun main(args: Array<String>) {
     // Предположение о том что, сообщение является одноалфавитным шифром замены не подтвердилось, частотный анализ выдает абракадабру
     //cipherReplace()
 
-    //dictionaryEN.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
-    //dictionaryRU.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
+    //ciphers.getDictionaryEN.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
+    //ciphers.getDictionaryRU.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
+}
+
+fun useAtbash(encryptMessage: String) {
+    val atbash = Atbash()
+    atbash.alphabet = AlphabetRU()
+    println("Атбаш: ${atbash.encode(encryptMessage)}")
+}
+
+fun useCaesar(encryptMessage: String) {
+    val caesar = CaesarGronsfeld()
+    caesar.alphabet = AlphabetRU()
+    for (shiftCount in -32..32) {
+        caesar.key = NumKey(shiftCount)
+        println("Сдвиг: ${caesar.key} ${caesar.decode(encryptMessage)}")
+    }
+}
+
+fun useGronsfeld(encryptMessage: String) {
+    val gronsfeld = CaesarGronsfeld()
+    gronsfeld.alphabet = AlphabetRU("Ё")
+    gronsfeld.key = NumKey(1, 4, 3)
+    println("Сдвиг: ${gronsfeld.key} ${gronsfeld.decode(encryptMessage)}")
+}
+
+fun useVigener(encryptMessage: String) {
+    val vigener = Vigener()
+    vigener.alphabet = AlphabetRU()
+    vigener.key = StringKey("111")
+    println("Ключ: ${vigener.key} ${vigener.decode(encryptMessage)}")
+}
+
+fun useFrequency(encryptMessage: String) {
+    val messFreq = encryptMessage.getFrequencySymbols(alphabetRU)
+    val collate = collateFrequency(messFreq, alphabetRU.frequency)
+    println(encryptMessage.map { collate[it] }.joinToString(""))
+}
+
+fun useRSA(encryptMessage: String) {
+
+    var key = RSAKey(7,13)
+    key = RSAKey(53,73)
+    println(key)
+
+}
+
+fun applyEncoding(bytes: ByteArray, charset: Charset) {
+    println(charset)
+    println("String: ${String(bytes, charset)}")
+    println("Byte:   ${Arrays.toString(bytes)}")
+    println()
 }
 
 fun findWords() {
@@ -46,67 +188,8 @@ fun findWords() {
             val word = strEncrypt.substring(i, i + size)
             println(word)
         }
-        println("Size window: $size")
+        println("ciphers.Size window: $size")
         println(words)
         println()
     }
-}
-
-
-fun cipherReplace() {
-
-    // Частотность символов в зашифрованном сообщении
-    val frequencySymbols = alphabetEN
-        .associate { char -> char to arrEncrypt.filter { char == it }.count().toDouble() / arrEncrypt.size * 100 }
-        .map { it.key to BigDecimal(it.value).setScale(2, RoundingMode.HALF_UP).toDouble() }
-        .associate { it.first to it.second }
-
-    // Сопоставим символы по частотности
-//    val frequencyNum = frequencySymbols.map { it.value }.sortedByDescending { it }
-//    val baseFrequencyNum = baseFrequencySymbols.map { it.value }.sortedByDescending { it }
-//    val dictDecrypt = mutableMapOf<Char, Char>()
-//    for (index in frequencyNum.indices){
-//        val x = 0
-//        //var encodeSymbol = baseFrequencySymbols[baseFrequencyNum[index]]
-//        var decodeSymbol = frequencySymbols.get frequencyNum[index]
-////        dictDecrypt[encodeSymbol] = decodeSymbol
-//    }
-
-    val dictDecrypt = mutableMapOf<Char, Char>(
-        'E' to 'X',
-        'T' to 'E',
-        'A' to 'T',
-        'O' to 'I',
-        'I' to 'A',
-        'N' to 'S',
-        'S' to 'H',
-        'H' to ' ',
-        'R' to ' ',
-        'D' to ' ',
-        'L' to 'O',
-        'C' to 'W',
-        'U' to ' ',
-        'M' to ' ',
-        'W' to ' ',
-        'F' to ' ',
-        'G' to 'Y',
-        'Y' to 'U',
-        'P' to 'M',
-        'B' to ' ',
-        'V' to ' ',
-        'K' to ' ',
-        'X' to ' ',
-        'J' to ' ',
-        'Q' to ' ',
-        'Z' to ' '
-    )
-
-    println(arrEncrypt)
-    println(arrEncrypt.map { dictDecrypt[it] }.joinToString(""))
-
-    println(baseFrequencySymbolsEN)
-    println(frequencySymbols)
-
-    println(baseFrequencySymbolsEN.map { it.value }.sum())
-    println(frequencySymbols.map { it.value }.sum())
 }
