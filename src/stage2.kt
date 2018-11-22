@@ -8,9 +8,22 @@ import java.util.*
 // 28 групп по 5 символов + 1 группа в 3 символа = 143 символа
 // В исходном коде страницы есть подсказка:
 // <!-- meta name="text" content="143" -->
-// Это скорее всего ключ.
-// В кодировке "windows-1251" это символ: "Џ"
-// В кодировке "866" это символ: "П"
+// Это скорее всего ключ, но может быть, что это просто количество символов в сообщении.
+// EIKOXNWSXTDDIANCDUTHSTOEOZCXHENIIERRXTSHTADIFCTAXSTLXHIXQIHXCAEKAAENWUEXCKNLESSXXIERTAXDLYHSBITXXHNMXXDKELSHIBEXOTWOETOXXDYXBNRWTYXCCAEXAEIAWBS
+
+/*
+Encrypted message
+Bytes:	 [69, 73, 75, 79, 88, 78, 87, 83, 88, 84, 68, 68, 73, 65, 78, 67, 68, 85, 84, 72, 83, 84, 79, 69, 79, 90, 67, 88, 72, 69, 78, 73, 73, 69, 82, 82, 88, 84, 83, 72, 84, 65, 68, 73, 70, 67, 84, 65, 88, 83, 84, 76, 88, 72, 73, 88, 81, 73, 72, 88, 67, 65, 69, 75, 65, 65, 69, 78, 87, 85, 69, 88, 67, 75, 78, 76, 69, 83, 83, 88, 88, 73, 69, 82, 84, 65, 88, 68, 76, 89, 72, 83, 66, 73, 84, 88, 88, 72, 78, 77, 88, 88, 68, 75, 69, 76, 83, 72, 73, 66, 69, 88, 79, 84, 87, 79, 69, 84, 79, 88, 88, 68, 89, 88, 66, 78, 82, 87, 84, 89, 88, 67, 67, 65, 69, 88, 65, 69, 73, 65, 87, 66, 83]
+UTF-8 string:        EIKOXNWSXTDDIANCDUTHSTOEOZCXHENIIERRXTSHTADIFCTAXSTLXHIXQIHXCAEKAAENWUEXCKNLESSXXIERTAXDLYHSBITXXHNMXXDKELSHIBEXOTWOETOXXDYXBNRWTYXCCAEXAEIAWBS
+UTF-16 string:       䕉䭏塎坓塔䑄䥁乃䑕呈協佅佚䍘䡅义䥅剒塔午呁䑉䙃呁塓呌塈䥘光䡘䍁䕋䅁䕎坕䕘䍋乌䕓単塉䕒呁塄䱙䡓䉉员塈乍塘䑋䕌午䥂䕘佔坏䕔佘塄奘䉎剗呙塃䍁䕘䅅䥁坂�
+UTF-32 string:       ������������������������������������
+US-ASCII string:     EIKOXNWSXTDDIANCDUTHSTOEOZCXHENIIERRXTSHTADIFCTAXSTLXHIXQIHXCAEKAAENWUEXCKNLESSXXIERTAXDLYHSBITXXHNMXXDKELSHIBEXOTWOETOXXDYXBNRWTYXCCAEXAEIAWBS
+windows-1251 string: EIKOXNWSXTDDIANCDUTHSTOEOZCXHENIIERRXTSHTADIFCTAXSTLXHIXQIHXCAEKAAENWUEXCKNLESSXXIERTAXDLYHSBITXXHNMXXDKELSHIBEXOTWOETOXXDYXBNRWTYXCCAEXAEIAWBS
+IBM866 string:       EIKOXNWSXTDDIANCDUTHSTOEOZCXHENIIERRXTSHTADIFCTAXSTLXHIXQIHXCAEKAAENWUEXCKNLESSXXIERTAXDLYHSBITXXHNMXXDKELSHIBEXOTWOETOXXDYXBNRWTYXCCAEXAEIAWBS
+
+EACH ASSET IN THE BLOCKCHAIN IS CODED WITH A UNIQUE IDENTIFIER BY WHICH THE ASSET CAN BE TRACK MONITOR AND TRADE SELL WWW.TKEY.BIZ/KEYS
+Process finished with exit code 0
+*/
 
 val strEncrypt = """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
                             TADIF CTAXS TLXHI XQIHX CAEKA AENWU EXCKN LESSX
@@ -19,198 +32,153 @@ val strEncrypt = """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
     .replace(" ", "")
     .replace("\n", "")
 
-val arrEncrypt = strEncrypt.toCharArray()
-val arrEncryptByte = strEncrypt.toByteArray()
+val arrEncrypt = strEncrypt.map { it.toInt() }.toIntArray()
 
-val alphabetRU = AlphabetRU()
-
-var strDecrypt = ""
 fun main(args: Array<String>) {
 
-    println("Encrypted message")
-    println("String:\t $strEncrypt")
-    println("Bytes:\t ${Arrays.toString(strEncrypt.toByteArray())}")
-    println()
+    show("Encrypted message", arrEncrypt)
 
-    if (true) useRSA(strDecrypt)
+    val sb = StringBuilder()
+    for(i in 0..12)
+        for (j in 0..142 step 13)
+            sb.append(strEncrypt[i + j])
+    print(sb.toString().replace("X", " ").replace("DOT", ".").replace("SLASH", "/"))
 
-    return
-
-    arrEncryptByte.forEach { print(it.toString(16)) }
-
-    // Сразу воспользуемся ключем
-    // Если применить XOR, то получаем стоку, в которой только кирилица, но она тоже зашифрована, от неё и будем плясать
-
-//    println("Decrypted message")
-//    println("String:\t $strDecrypt")
-//    println("Bytes:\t ${Arrays.toString(strDecrypt.toByteArray())}")
-//    println()
-
-    val arrDecryptByte = strEncrypt.map { it.toInt() xor 143 }.map { it.toByte() }.toByteArray()
-    applyEncoding(arrDecryptByte, Charsets.UTF_8)
-    applyEncoding(arrDecryptByte, Charsets.UTF_16)
-    applyEncoding(arrDecryptByte, Charsets.UTF_16BE)
-    applyEncoding(arrDecryptByte, Charsets.UTF_16LE)
-    applyEncoding(arrDecryptByte, Charsets.UTF_32)
-    applyEncoding(arrDecryptByte, Charsets.UTF_32BE)
-    applyEncoding(arrDecryptByte, Charsets.UTF_32LE)
-    applyEncoding(arrDecryptByte, Charsets.US_ASCII)
-    applyEncoding(arrDecryptByte, Charsets.ISO_8859_1)
-    applyEncoding(arrDecryptByte, charset("windows-1251"))
-    applyEncoding(arrDecryptByte, charset("866"))
-
-    println()
-
-//    println("Encrypted byte message:\t\t ${strEncrypt.map { it.toInt() }}")
-//    println("Decrypted byte message:\t\t ${strDecrypt.map { it.toInt() }}")
-//    println()
+//    arrEncryptByte.forEach { print(it.toString(16)) }
 //
+//    // Сразу воспользуемся ключем
+//    // Если применить XOR, то получаем стоку, в которой только кирилица, но она тоже зашифрована, от неё и будем плясать
+//
+////    println("Decrypted message")
+////    println("String:\t $strDecrypt")
+////    println("Bytes:\t ${Arrays.toString(strDecrypt.toByteArray())}")
+////    println()
+    // Так как и текст на картинке приглашения, и строка подсказки из EXIF картинки были на кирилице,
+    // то считаем что и зашифрованное сообщение тоже на кирилице.
 
+    //findWords(strEncrypt)
+    useCiphers()
+}
+
+fun useCiphers() {
     // Атбаш не подошел
-    if (false) useAtbash(strDecrypt)
+    if (false) {
+        useAtbash(Alphabets.EN, strEncrypt)
+    }
 
     // Поиграемся со сдвигом по алфавиту, т.н. шифром Цезаря
-    if (false) useCaesar(strDecrypt)
+    if (false) {
+        useCaesar(Alphabets.EN, strEncrypt)
+    }
     // Цезарь не подошел
 
 
     // Поиграемся со сдвигом по алфавиту, т.н. шифром Гронсфельда, в котором ключ состоит не из одной цифры. Это модификация шифра Цезаря
-    if (false) useGronsfeld(strDecrypt)
+    if (false) {
+        useGronsfeld(Alphabets.EN, strEncrypt)
+    }
     // Гронсфельд не подошел
 
     // Поиграемся с шифром Виженера
-    if (false) useVigener(strDecrypt)
+    if (false) {
+        useVigener(Alphabets.EN, strEncrypt)
+    }
     // Виженер не подошел, нет ключа
 
     // Сдвиг ничего не дал, теперь дело за частотным анализом
-    if (false) useFrequency(strDecrypt)
+    if (false) {
+        useFrequency(Alphabets.EN, strEncrypt)
+    }
 
-
-//    val tb = strEncrypt.map { it.toByte() }
-//    val t = strEncrypt.map { it.toByte() + 143 }
-//    println(tb)
-
-
-//    strDecrypt.getFrequencySymbols(alphabetRU).forEach { println("${it.key}\t${it.value}") }
-
-
-//    val arrDecrypt = arrEncrypt.map { it.toInt() + 143 }.map { it.toChar() }.toCharArray()
-//    println("arrDecrypt: ${arrDecrypt.map { it.toInt() }}")
-//
-//    val arrDecryptInt = arrDecrypt.map { it.toInt()}
-//    println("arrDecryptInt: $arrDecryptInt")
-//
-//    println("Sorted: ${arrDecryptInt.sortedBy { it }}")
-//    println("Sorted set: ${arrDecryptInt.toSortedSet()}")
-//
-//    val strDecrypt = String(arrDecrypt.map { it.toByte() }.toByteArray(), charset("windows-1251"))
-//    println("strDecrypt: $strDecrypt")
-
-
-    // Так как и текст на картинке приглашения, и строка подсказки из EXIF картинки были на кирилице,
-    // то считаем что и зашифрованное сообщение тоже на кирилице.
-
-    //println(strEncrypt)
-//    arrEncrypt.forEach { println("$it\t${it.toByte()}\t") }
-
-    // Поищем повторяющиеся слова
-    //findWords()
-
-    //val t = arrEncrypt.groupBy { it }.map { it.key to it.value.count() }.associate { it.first to it.second }
-    //t.forEach { char, count -> println("$char\t$count") }
-//    for (i in 0..arrEncrypt.size-1 step 2) {
-//        println("${arrEncrypt[i]}${arrEncrypt[i + 1]}")
-//    }
-
-    // Предположение о том что, сообщение является одноалфавитным шифром замены не подтвердилось, частотный анализ выдает абракадабру
-    //cipherReplace()
-
-    //ciphers.getDictionaryEN.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
-    //ciphers.getDictionaryRU.forEach { println("$it\t${it.toInt()}\t${it.toLowerCase()}\t${it.toLowerCase().toInt()}") }
+    // Поиграемся с RSA
+    if (false) {
+        useRSA(Alphabets.EN, strEncrypt)
+    }
 }
 
-fun useAtbash(encryptMessage: String) {
+fun useAtbash(alphabet: Alphabet, encryptMessage: String) {
     val atbash = Atbash()
-    atbash.alphabet = AlphabetRU()
+    atbash.alphabet = alphabet
     println("Атбаш: ${atbash.encode(encryptMessage)}")
 }
 
-fun useCaesar(encryptMessage: String) {
+fun useCaesar(alphabet: Alphabet, encryptMessage: String) {
     val caesar = CaesarGronsfeld()
-    caesar.alphabet = AlphabetRU()
+    caesar.alphabet = alphabet
     for (shiftCount in -32..32) {
         caesar.key = NumKey(shiftCount)
         println("Сдвиг: ${caesar.key} ${caesar.decode(encryptMessage)}")
     }
 }
 
-fun useGronsfeld(encryptMessage: String) {
+fun useGronsfeld(alphabet: Alphabet, encryptMessage: String) {
     val gronsfeld = CaesarGronsfeld()
-    gronsfeld.alphabet = AlphabetRU("Ё")
+    gronsfeld.alphabet = alphabet
     gronsfeld.key = NumKey(1, 4, 3)
     println("Сдвиг: ${gronsfeld.key} ${gronsfeld.decode(encryptMessage)}")
 }
 
-fun useVigener(encryptMessage: String) {
+fun useVigener(alphabet: Alphabet, encryptMessage: String) {
     val vigener = Vigener()
-    vigener.alphabet = AlphabetRU()
+    vigener.alphabet = alphabet
     vigener.key = StringKey("111")
     println("Ключ: ${vigener.key} ${vigener.decode(encryptMessage)}")
 }
 
-fun useFrequency(encryptMessage: String) {
-    val messFreq = encryptMessage.getFrequencySymbols(alphabetRU)
-    val collate = collateFrequency(messFreq, alphabetRU.frequency)
+fun useFrequency(alphabet: Alphabet, encryptMessage: String) {
+    val messFreq = encryptMessage.getFrequencySymbols(alphabet)
+    val collate = collateFrequency(messFreq, alphabet.frequency)
     println(encryptMessage.map { collate[it] }.joinToString(""))
 }
 
-fun useRSA(encryptMessage: String) {
+fun useRSA(alphabet: Alphabet, encryptMessage: String) {
 
-    val RSA = RSA()
-    RSA.alphabet = AlphabetRU()
-    //RSA.key = MyRSA(7,13)
-    RSA.key = MyRSA(7,13)
-    println("Ключ: ${RSA.key}")
+    val rsa = RSA()
+    var keys = MyRSA.getKeyPair(11, 13)
+    var (publicKey, privateKey) = keys
 
-    println()
+    //val messsageNums = Alphabets.EN.stringToNums(encryptMessage)
+    val messsageNums = encryptMessage.map { it.toInt() }.toIntArray()
+    println("messsageNums: ${Arrays.toString(messsageNums)}")
 
-    var message = "КАФСИ"
-    println("message bytes: ${Arrays.toString(message.toByteArray())}")
-    println("message: $message")
-
-    println()
-
-    val messageEncrypt = RSA.encode(message.map { alphabetRU.getNumByChar(it).toByte() }.toByteArray())
-    println("messageEncrypt bytes: ${Arrays.toString(messageEncrypt)}")
-    message = String(messageEncrypt, Charset.defaultCharset())
-    println("messageEncrypt: $message")
-
-    println()
-
-    val messageDecrypt = RSA.decode(messageEncrypt)
+    val messageDecrypt = rsa.decode(messsageNums, privateKey = privateKey)
     println("messageDecrypt bytes: ${Arrays.toString(messageDecrypt)}")
-    message = String(messageDecrypt, Charset.defaultCharset())
+    val message = alphabet.numsToString(messageDecrypt.map { it.toInt() }.toIntArray())
     println("messageDecrypt: $message")
+
 }
 
-fun applyEncoding(bytes: ByteArray, charset: Charset) {
-    println(charset)
-    println("String: ${String(bytes, charset)}")
-    println("Byte:   ${Arrays.toString(bytes)}")
-    println()
+fun applyEncoding(ints: IntArray, charset: Charset) {
+    val nameCharset = ("$charset string:").padEnd(20, ' ')
+    println("$nameCharset ${String(ints.map { it.toByte() }.toByteArray(), charset)}")
 }
 
-fun findWords() {
+fun findWords(strEncrypt: String) {
 
     for (size in 2..10) {
-        val words = mutableMapOf<String, Int>()
+        var words = mutableMapOf<String, Int>()
 
         for (i in 0..strEncrypt.length - size) {
             val word = strEncrypt.substring(i, i + size)
-            println(word)
+            words[word] = (words[word] ?: 0) + 1
         }
-        println("ciphers.Size window: $size")
-        println(words)
-        println()
+        words = words.filter { it.value > 1 }.toMutableMap()
+        if (words.isNotEmpty()) {
+            println("ciphers.Size window: $size")
+            println(words)
+        }
     }
+}
+
+fun show(text: String, ints: IntArray) {
+
+    println(text)
+    println("Bytes:\t ${Arrays.toString(ints)}")
+    applyEncoding(ints, Charsets.UTF_8)
+    applyEncoding(ints, Charsets.UTF_16)
+    applyEncoding(ints, Charsets.UTF_32)
+    applyEncoding(ints, Charsets.US_ASCII)
+    applyEncoding(ints, charset("windows-1251"))
+    applyEncoding(ints, charset("IBM866"))
+    println()
 }
