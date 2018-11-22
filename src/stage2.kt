@@ -166,10 +166,31 @@ fun useFrequency(encryptMessage: String) {
 
 fun useRSA(encryptMessage: String) {
 
-    var key = RSAKey(7,13)
-    key = RSAKey(53,73)
-    println(key)
+    val RSA = RSA()
+    RSA.alphabet = AlphabetRU()
+    //RSA.key = MyRSA(7,13)
+    RSA.key = MyRSA(7,13)
+    println("Ключ: ${RSA.key}")
 
+    println()
+
+    var message = "КАФСИ"
+    println("message bytes: ${Arrays.toString(message.toByteArray())}")
+    println("message: $message")
+
+    println()
+
+    val messageEncrypt = RSA.encode(message.map { alphabetRU.getNumByChar(it).toByte() }.toByteArray())
+    println("messageEncrypt bytes: ${Arrays.toString(messageEncrypt)}")
+    message = String(messageEncrypt, Charset.defaultCharset())
+    println("messageEncrypt: $message")
+
+    println()
+
+    val messageDecrypt = RSA.decode(messageEncrypt)
+    println("messageDecrypt bytes: ${Arrays.toString(messageDecrypt)}")
+    message = String(messageDecrypt, Charset.defaultCharset())
+    println("messageDecrypt: $message")
 }
 
 fun applyEncoding(bytes: ByteArray, charset: Charset) {
