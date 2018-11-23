@@ -127,7 +127,7 @@ fun useVigener(alphabet: Alphabet, encryptMessage: String) {
 
 fun useFrequency(alphabet: Alphabet, encryptMessage: String) {
     val messFreq = encryptMessage.getFrequencySymbols(alphabet)
-    val collate = collateFrequency(messFreq, alphabet.frequency)
+    val collate = getTableReplacements(messFreq, alphabet.frequency)
     println(encryptMessage.map { collate[it] }.joinToString(""))
 }
 
