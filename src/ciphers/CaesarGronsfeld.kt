@@ -5,13 +5,13 @@ class CaesarGronsfeld : ICryptography {
     lateinit var alphabet: Alphabet
     lateinit var key: NumKey
 
-    override fun encode(message: String) = proc(message, true)
+    override fun encode(message: Message) = proc(message, true)
 
-    override fun decode(message: String) = proc(message, false)
+    override fun decode(message: Message) = proc(message, false)
 
-    private fun proc(message: String, encode: Boolean): String {
+    private fun proc(message: Message, encode: Boolean): Message {
         key.reset()
-        return message.map { getChar(it, encode) }.joinToString("")
+        return Message(message.map { getChar(it, encode) }.joinToString(""))
     }
 
     private fun getChar(c: Char, encode: Boolean): Char {

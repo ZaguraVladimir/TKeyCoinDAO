@@ -1,4 +1,3 @@
-
 import ciphers.*
 import java.nio.charset.Charset
 import java.util.*
@@ -25,12 +24,14 @@ EACH ASSET IN THE BLOCKCHAIN IS CODED WITH A UNIQUE IDENTIFIER BY WHICH THE ASSE
 Process finished with exit code 0
 */
 
-val strEncrypt = """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
+val strEncrypt = Message(
+    """EIKOX NWSXT DDIAN CDUTH STOEO ZCXHE NIIER RXTSH
                             TADIF CTAXS TLXHI XQIHX CAEKA AENWU EXCKN LESSX
                             XIERT AXDLY HSBIT XXHNM XXDKE LSHIB EXOTW OETOX
                             XDYXB NRWTY XCCAE XAEIA WBS"""
-    .replace(" ", "")
-    .replace("\n", "")
+        .replace(" ", "")
+        .replace("\n", "")
+)
 
 val arrEncrypt = strEncrypt.map { it.toInt() }.toIntArray()
 
@@ -39,9 +40,9 @@ fun main(args: Array<String>) {
     show("Encrypted message", arrEncrypt)
 
     val sb = StringBuilder()
-    for(i in 0..12)
+    for (i in 0..12)
         for (j in 0..142 step 13)
-            sb.append(strEncrypt[i + j])
+            sb.append(strEncrypt.text[i + j])
     print(sb.toString().replace("X", " ").replace("DOT", ".").replace("SLASH", "/"))
 
 //    arrEncryptByte.forEach { print(it.toString(16)) }
@@ -96,13 +97,13 @@ fun useCiphers() {
     }
 }
 
-fun useAtbash(alphabet: Alphabet, encryptMessage: String) {
+fun useAtbash(alphabet: Alphabet, encryptMessage: Message) {
     val atbash = Atbash()
     atbash.alphabet = alphabet
     println("Атбаш: ${atbash.encode(encryptMessage)}")
 }
 
-fun useCaesar(alphabet: Alphabet, encryptMessage: String) {
+fun useCaesar(alphabet: Alphabet, encryptMessage: Message) {
     val caesar = CaesarGronsfeld()
     caesar.alphabet = alphabet
     for (shiftCount in -32..32) {
@@ -111,27 +112,27 @@ fun useCaesar(alphabet: Alphabet, encryptMessage: String) {
     }
 }
 
-fun useGronsfeld(alphabet: Alphabet, encryptMessage: String) {
+fun useGronsfeld(alphabet: Alphabet, encryptMessage: Message) {
     val gronsfeld = CaesarGronsfeld()
     gronsfeld.alphabet = alphabet
     gronsfeld.key = NumKey(1, 4, 3)
     println("Сдвиг: ${gronsfeld.key} ${gronsfeld.decode(encryptMessage)}")
 }
 
-fun useVigener(alphabet: Alphabet, encryptMessage: String) {
+fun useVigener(alphabet: Alphabet, encryptMessage: Message) {
     val vigener = Vigener()
     vigener.alphabet = alphabet
     vigener.key = StringKey("111")
     println("Ключ: ${vigener.key} ${vigener.decode(encryptMessage)}")
 }
 
-fun useFrequency(alphabet: Alphabet, encryptMessage: String) {
-    val messFreq = encryptMessage.getFrequencySymbols(alphabet)
+fun useFrequency(alphabet: Alphabet, encryptMessage: Message) {
+    val messFreq = getFrequencySymbols(encryptMessage.text, alphabet)
     val collate = getTableReplacements(messFreq, alphabet.frequency)
     println(encryptMessage.map { collate[it] }.joinToString(""))
 }
 
-fun useRSA(alphabet: Alphabet, encryptMessage: String) {
+fun useRSA(alphabet: Alphabet, encryptMessage: Message) {
 
     val rsa = RSA()
     var keys = MyRSA.getKeyPair(11, 13)

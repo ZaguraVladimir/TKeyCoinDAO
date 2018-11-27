@@ -1,5 +1,6 @@
 package ciphers
 
+import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -13,7 +14,22 @@ class Alphabet(
 ) {
     val symbols: CharArray = symbols.filterNot { ignoreChars.toUpperCase().contains(it) }.toCharArray()
     private val ignoreChars: CharArray = ignoreChars.toCharArray()
-    val frequency = frequency.filterNot { ignoreChars.toUpperCase().contains(it.key) }
+    var frequency = frequency.filterNot { ignoreChars.toUpperCase().contains(it.key) }
+
+    constructor(alphabet: Alphabet) : this(
+        alphabet.name,
+        alphabet.symbols.joinToString(""),
+        alphabet.ignoreChars.joinToString(""),
+        alphabet.frequency
+    )
+
+    fun calcFrequency(file: File) {
+        frequency = getFrequencySymbols(file, this)
+    }
+
+    fun calcFrequency(text: String) {
+        frequency = getFrequencySymbols(text, this)
+    }
 
     override fun toString(): String {
         val sb = StringBuilder()
@@ -35,6 +51,8 @@ class Alphabet(
     }
 
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 object Alphabets {
 
@@ -121,17 +139,7 @@ fun Alphabet.stringToNums(message: String): IntArray = message.map { getNumByCha
 fun Alphabet.numsToString(nums: IntArray): String = nums.map { getCharByNum(it) }.joinToString("")
 
 fun Alphabet.getCharByNum(num: Int, offset: Int = 0): Char {
-
-    val offset = offset % this.symbols.size
-    var num = num + offset - 1
-
-    num = when {
-        num >= symbols.size -> num % this.symbols.size
-        num < 0 -> symbols.size + num
-        else -> num
-    }
-
-    return symbols[num]
+    return symbols[(num - 1 + (offset + symbols.size) % symbols.size) % symbols.size]
 }
 
 fun Alphabet.getNumByChar(char: Char): Int {
@@ -142,10 +150,11 @@ fun Alphabet.getNumByChar(char: Char): Int {
     return num
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
 
-fun String.getFrequencySymbols(alphabet: Alphabet): Map<Char, Double> {
+fun getFrequencySymbols(text: String, alphabet: Alphabet): Map<Char, Double> {
 
-    val str = this.toUpperCase().filter { alphabet.symbols.contains(it) }
+    val str = text.toUpperCase().filter { alphabet.symbols.contains(it) }
     val frequency = alphabet.symbols
         .associate { char -> char to str.filter { char == it }.count().toDouble() / str.length * 100 }
         .map { it.key to BigDecimal(it.value).setScale(2, RoundingMode.HALF_UP).toDouble() }
@@ -153,6 +162,12 @@ fun String.getFrequencySymbols(alphabet: Alphabet): Map<Char, Double> {
         .associate { it.first to it.second }
     return frequency
 }
+
+fun getFrequencySymbols(file: File, alphabet: Alphabet): Map<Char, Double> {
+    return getFrequencySymbols(text = file.readText(), alphabet = alphabet)
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 fun getTableReplacements(freg: Map<Char, Double>, fregBase: Map<Char, Double>): Map<Char, Char> {
 

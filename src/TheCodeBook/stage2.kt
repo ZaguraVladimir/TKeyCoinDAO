@@ -2,6 +2,7 @@ package TheCodeBook
 
 import ciphers.Alphabets
 import ciphers.CaesarGronsfeld
+import ciphers.Message
 import ciphers.NumKey
 
 /*
@@ -21,8 +22,8 @@ Faber est suae quisque fortunae.(Appius Claudius Caecus)
 
 fun main(args: Array<String>) {
 
-    val encryptMessage = "MHILY LZA ZBHL XBPZXBL MVYABUHL HWWPBZ JSHBKPBZ JHLJBZ KPJABT HYJHUBT LZA ULBAYVU"
-    var decryptMessage = ""
+    val encryptMessage = Message("MHILY LZA ZBHL XBPZXBL MVYABUHL HWWPBZ JSHBKPBZ JHLJBZ KPJABT HYJHUBT LZA ULBAYVU")
+    var decryptMessage = Message("")
     println("Message: $encryptMessage")
 
     val caesar = CaesarGronsfeld()

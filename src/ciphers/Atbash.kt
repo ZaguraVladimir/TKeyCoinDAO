@@ -4,11 +4,11 @@ class Atbash : ICryptography {
 
     lateinit var alphabet: Alphabet
 
-    override fun encode(message: String) = proc(message)
+    override fun encode(message: Message) = proc(message)
 
-    override fun decode(message: String) = proc(message)
+    override fun decode(message: Message) = proc(message)
 
-    private fun proc(message: String) = message.map { getChar(it) }.joinToString("")
+    private fun proc(message: Message) = Message(message.map { getChar(it) }.joinToString(""))
 
     private fun getChar(c: Char): Char {
         return if (c.isLetter()) {

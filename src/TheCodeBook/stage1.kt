@@ -1,29 +1,40 @@
 package TheCodeBook
 
-import ciphers.Alphabets
-import ciphers.getFrequencySymbols
-import ciphers.getTableReplacements
+import ciphers.*
 import java.io.File
 
 fun main(args: Array<String>) {
 
-    val encryptMessage: String = File("TheCodeBook/Задача 1 Простой одноалфавитный шифр замены.txt").readText()
+    val encryptMessage =
+        Message(File("TheCodeBook/Задача 1 Простой одноалфавитный шифр замены.txt").readText(), delimiter = " ")
     var decryptMessage = ""
-    println("Message: $encryptMessage")
+    println(encryptMessage)
 
     experiments(encryptMessage)
-    showResult(encryptMessage)
+    //showResult(encryptMessage)
 }
 
-fun experiments(encryptMessage: String){
+fun experiments(encryptMessage: Message) {
 
-    val messFreq = encryptMessage.getFrequencySymbols(Alphabets.EN)
-    val tableReplacements = getTableReplacements(messFreq, Alphabets.EN.frequency)
+    val alphabet = Alphabet(Alphabets.EN)
+    alphabet.calcFrequency(File("The Tragedy of Birlstone.txt"))
+
+    val messFreq = getFrequencySymbols(encryptMessage.text, Alphabets.EN)
+
+    var tableReplacements = getTableReplacements(messFreq, alphabet.frequency)
+
     println(tableReplacements)
-    println(encryptMessage.map { tableReplacements[it] ?: it }.joinToString(""))
+    println(encryptMessage.text.map { tableReplacements[it] ?: it }.joinToString(""))
+    println()
+
+    tableReplacements = getTableReplacements(messFreq, Alphabets.EN.frequency)
+
+    println(tableReplacements)
+    println(encryptMessage.text.map { tableReplacements[it] ?: it }.joinToString(""))
+    println()
 }
 
-fun showResult(encryptMessage: String) {
+fun showResult(encryptMessage: Message) {
 
     val tableReplacements = mapOf(
         'X' to 'E',
